@@ -1,0 +1,167 @@
+-- 문자열 비교
+CREATE TABLE CHAR_COMPARE(
+SN CHAR(10),
+CHAR_COMPARE_4 CHAR(4),
+CHAR_COMPARE_6 CHAR(6)
+);
+
+INSERT INTO CHAR_COMPARE VALUES('10001','SQLD','SQLD');
+INSERT INTO CHAR_COMPARE VALUES('10002','SQLD','SQLA');
+
+COMMIT;
+
+SELECT * FROM CHAR_COMPARE;
+
+SELECT
+REPLACE(CHAR_COMPARE_4,' ','_') AS CHAR_COMPARE_4,
+REPLACE(CHAR_COMPARE_6,' ','_') AS CHAR_COMPARE_6
+FROM CHAR_COMPARE;
+
+SELECT
+REPLACE(CHAR_COMPARE_4,' ','_') AS CHAR_COMPARE_4,
+REPLACE(CHAR_COMPARE_6,' ','_') AS CHAR_COMPARE_6
+FROM CHAR_COMPARE
+WHERE SN='10001'
+AND CHAR_COMPARE_4=CHAR_COMPARE_6
+;
+
+SELECT
+REPLACE(CHAR_COMPARE_4,' ','_') AS CHAR_COMPARE_4,
+REPLACE(CHAR_COMPARE_6,' ','_') AS CHAR_COMPARE_6
+FROM CHAR_COMPARE
+WHERE SN='10002'
+AND CHAR_COMPARE_4>CHAR_COMPARE_6
+;
+
+CREATE TABLE VARCHAR_COMPARE(
+SN CHAR(10),
+CHAR_COMPARE_4 CHAR(4),
+VARCHAR_COMPARE_6 VARCHAR2(6)
+);
+
+INSERT INTO VARCHAR_COMPARE VALUES('10001','SQLD','SQLD  ');
+INSERT INTO VARCHAR_COMPARE VALUES('10002','SQLD','SQLA  ');
+
+COMMIT;
+
+SELECT
+REPLACE(CHAR_COMPARE_4,' ','+') AS CHAR_COMPARE_4,
+REPLACE(VARCHAR_COMPARE_6,' ','+') AS VARCHAR_COMPARE_6
+FROM VARCHAR_COMPARE;
+
+SELECT
+REPLACE(CHAR_COMPARE_4,' ','+') AS CHAR_COMPARE_4,
+REPLACE(VARCHAR_COMPARE_6,' ','+') AS VARCHAR_COMPARE_6
+FROM VARCHAR_COMPARE
+WHERE SN='10001'
+AND CHAR_COMPARE_4=VARCHAR_COMPARE_6
+;
+
+SELECT
+REPLACE(CHAR_COMPARE_4,' ','+') AS CHAR_COMPARE_4,
+REPLACE(VARCHAR_COMPARE_6,' ','+') AS VARCHAR_COMPARE_6
+FROM VARCHAR_COMPARE
+WHERE SN='10001'
+AND CHAR_COMPARE_4<>VARCHAR_COMPARE_6
+;
+
+SELECT
+REPLACE(CHAR_COMPARE_4,' ','_') AS CHAR_COMPARE_4,
+REPLACE(VARCHAR_COMPARE_6,' ','_') AS VARCHAR_COMPARE_6
+FROM VARCHAR_COMPARE
+WHERE CHAR_COMPARE_4=TRIM(VARCHAR_COMPARE_6)
+;
+
+-- 상수와의 비교
+SELECT
+REPLACE(CHAR_COMPARE_4,' ','+') AS CHAR_COMPARE_4,
+REPLACE(VARCHAR_COMPARE_6,' ','+') AS VARCHAR_COMPARE_6
+FROM VARCHAR_COMPARE
+WHERE SN='10001'
+AND CHAR_COMPARE_4='SQLD     '
+;
+
+SELECT
+REPLACE(CHAR_COMPARE_4,' ','+') AS CHAR_COMPARE_4,
+REPLACE(VARCHAR_COMPARE_6,' ','+') AS VARCHAR_COMPARE_6
+FROM VARCHAR_COMPARE
+WHERE SN='10001'
+AND VARCHAR_COMPARE_6='SQLD'
+;
+
+-- # 단일행 함수
+-- ## 문자열 함수
+
+SELECT
+LOWER('SQL Developoer') AS "LOWER('SQL Developoer')", -- 소문자 변환
+UPPER('SQL Developoer') AS "UPPER('SQL Developoer')", -- 대문자 변환
+ASCII('A') AS "ASCII('A')", -- 문자를 아스키코드로 변환
+CHR('65') AS "CHR('65')", -- 아스키코드를 문자로 변환
+CONCAT('SQL', 'Developoer') AS "CONCAT('SQL', 'Developoer')", -- 문자열을 연결
+SUBSTR('SQL Developoer', 1, 3) AS "SUBSTR('SQL Developoer', 1, 3)", -- 위치부터 개수만큼 자름
+LENGTH('SQL') AS "LENGTH('SQL')", -- 문자열 길이 반환
+LTRIM('SQL') AS "LTRIM('  SQL')", -- 왼쪽 공백 제거
+RTRIM('SQL') AS "RTRIM('SQL  ')", -- 오른쪽 공백 제거
+RPAD('Steve',10,'-') AS "RPAD('Steve',10,'-')", -- 오른쪽에 주어진 문자를 채움
+LPAD('Steve',10,'*') AS "LPAD('Steve',10,'*')", -- 왼쪽에 주어진 문자를 채움
+REPLACE('Java Programmer','Java','BigData') AS "REPLACE" -- 문자를 교체
+FROM DUAL;
+
+-- ## 숫자형 함수
+SELECT
+MOD(27,5) AS MOD, -- 나머지 값 반환
+CEIL(38.678) as CEIL, -- 올림값 반환
+FLOOR(38.678) AS floor, -- 내림값 반환
+ROUND(38.678, 2) AS round,
+TRUNC(38.678, 2) AS trunc
+FROM dual;
+
+-- ## 날짜형 함수
+
+-- 현재 날짜를 조회
+SELECT SYSDATE
+FROM dual;
+
+-- 현재 날짜와 시간 조회
+SELECT SYSTIMESTAMP
+FROM dual;
+
+-- 날짜 연산
+-- 날짜 + 숫자 = 날짜 => 일(DAY) 수를 날짜에 더함
+-- 날짜 - 숫자 = 날짜 => 날짜에서 일 수를 뺌
+-- 날짜 - 날짜 = 일수 => 어떤 날짜에서 다른 날짜를 뺀 일수
+-- 날짜 + 숫자/24 = 날짜 => 날짜에 시간을 더함
+
+SELECT
+SYSDATE -1 AS "SYSDATE-1",
+(SYSDATE + 10) - SYSDATE AS "날짜 - 날짜",
+SYSTIMESTAMP - 1/24 AS "1시간 차감",
+SYSTIMESTAMP - 100/24/60 AS "100분 차감",
+SYSTIMESTAMP - 30/24/60/60 AS "30초 차감"
+FROM dual;
+
+-- ## 변환 함수
+
+-- 날짜를 문자로 변환 (TO_CHAR 함수)
+-- 날짜의 문자 포맷 형식 : Y - 연도, MM - 두자리 월, D - 일수
+-- 시간의 문자 포멧 형식 : HH12 - (1~12), HH24 - (0~24), MI - 분, ss - 초, AM PM - 오전 오후
+SELECT
+TO_CHAR(SYSDATE,'MM - DD') as "날짜(월,일)",
+TO_CHAR(SYSDATE,'YYYY/MM/DD') as "날짜(년,월,일)",
+TO_CHAR(SYSDATE,'YYYY"년" MM"월" DD"일"') as "날짜 한글포함",
+TO_CHAR(SYSDATE,'YYYY/MM/DD HH24:MI:SS') as "날짜와 시간",
+TO_CHAR(SYSDATE,'YYYY/MM/DD PM HH12:MI:SS') as "날짜와 시간2"
+FROM dual;
+
+-- 숫자를 문자로 변환
+-- 숫자 포맷 형식
+-- $ : 달러기호, L : 지역화폐기호, . : 소수점 표시, , : 콤마 표시
+SELECT
+TO_CHAR(9500,'$999,999') as "달러",
+TO_CHAR(1350000,'999,999,999L') as "원화"
+FROM dual;
+
+-- # 숫자 변환 함수 TO_NUMBER
+SELECT
+TO_NUMBER('$5,500', '$999,999') -4000 as "계산결과"
+FROM dual;
